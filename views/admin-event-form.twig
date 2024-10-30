@@ -1,0 +1,56 @@
+<h2>{{ event ? tr('Edit') : tr('New') }} {{ tr('Event') }}
+</h2>
+<a href="#" class="go-back">{{ tr('Back') }}</a>
+
+
+{% block form %}
+    <form id="schedular-event-form" class="form-horizontal" role="form" method="post">
+
+        <table class="form-table">
+            <tbody>
+            <tr class="form-field">
+                <th><label for="event-calendar">{{ tr('Calendar') }}</label></th>
+                <td><select name="calendarId" id="event-calendar">
+                        {% for calendar in calendars %}
+                            <option value="{{ calendar.id }}" {{ calendar.id==event.sheduleId ? 'selected' }}>{{ calendar.name }}</option>
+                        {% endfor %}
+                </select></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="jih-date">{{ tr('Datetime') }}</label></th>
+                <td><input id="jih-date" type="datetime" name="datetime" placeholder="YYYY-MM-DD HH:mm:ss" value="{{ event.datetime }}"></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="event-name">{{ tr('Name') }}</label></th>
+                <td><input id="event-name" type="text" name="name" placeholder="Name" value="{{ event.name }}"></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="event-email">{{ tr('Email') }}</label></th>
+                <td><input id="event-email" type="email" name="email" placeholder="Email" value="{{ event.email }}"></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="event-pin">{{ tr('Pin') }}</label></th>
+                <td><input id="event-pin" type="password" name="pin" placeholder="Pin" value="{{ event.pin }}"></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="calendar-description">{{ tr('Description') }}</label></th>
+                <td><textarea id="calendar-description" rows="3" name="description" placeholder="Description">{{ event.description }}</textarea></td>
+            <tr class="form-field">
+                <td class="right"></td>
+                <td><button type="submit" class="button button-primary">{{ tr('Save') }}</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}
+
+<script>
+    jQuery('#schedular-event-form').submit(function(e){
+        e.preventDefault();
+        var data = jQuery(this).serializeObject();
+        api.SaveEvent(data,function(){
+            GotoUrl(jQuery.query.set('page','jih-Events'))
+        });
+        return false;
+    })
+</script>

@@ -1,0 +1,70 @@
+<h2> {{ tr('Settings') }}
+</h2>
+<a href="#" class="go-back">{{ tr('Back') }}</a>
+<p>
+{{ tr('any change you make in this page will directly be saved!') }}
+</p>
+{% block form %}
+    <form id="schedular-settings-form" class="form-horizontal" role="form" method="post">
+
+        <table class="form-table">
+            <tbody>
+            <tr class="form-field">
+                <th><label for="event-calendar">{{ tr('Default calendar') }}</label></th>
+                <td><select name="defaultCalendar" id="event-calendar">
+                        {% for cal in calendars %}
+                            <option value="{{ cal.id }}" {{ cal.id==calendar ? 'selected' }}>{{ cal.name }}</option>
+                        {% endfor %}
+                    </select></td>
+            </tr>
+            <tr class="form-field">
+                <th>
+                    <label for="recaptcha-clientside">{{ tr('Recaptcha Clientside (site key)') }}</label>
+                    <sup><a href="https://www.google.com/recaptcha">{{ tr('get it here') }}</a></sup>
+                </th>
+                <td><input name="reCaptchaClient" id="recaptcha-clientside" placeholder="{{ tr('Recaptcha Clientside key') }}" value="{{ setting('reCaptchaClient') }}" /></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="recaptcha-serverside">{{ tr('Recaptcha Serverside (secret key)') }}</label></th>
+                <td><input name="reCaptchaServer" id="recaptcha-serverside" placeholder="{{ tr('Recaptcha Serverside key') }}" value="{{ setting('reCaptchaServer') }}"/></td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="showCalendarSelection">{{ tr('Show Calendar Selection') }}</label></th>
+                <td><select name="showCalendar" id="showCalendarSelection">
+                        {% set version = setting('showCalendar') %}
+                        <option value="0" {% if version == 0 %}selected{% endif %}>Never</option>
+                        <option value="1" {% if version == 1 %}selected{% endif %}>When admin</option>
+                        <option value="2" {% if version == 2 %}selected{% endif %}>Always</option>
+                        </select>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="allowBookHour">{{ tr('Allow to book hour') }}</label></th>
+                <td><select name="allowBookHour" id="allowBookHour">
+                        {% set version = setting('allowBookHour') %}
+                        <option value="anon" {% if version == 0 %}selected{% endif %}>Anonymous and Users</option>
+                        <option value="user" {% if version == 1 %}selected{% endif %}>Logged in Users only</option>
+                        {# <option value="admin" {% if version == 2 %}selected{% endif %}>Admin</option> #}
+                        </select>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th><label for="plugin-style">{{ tr('Plugin css') }}</label></th>
+                <td><textarea rows="20" name="style" id="plugin-style" placeholder="{{ tr('plugin css') }}">{{ setting('style') }}</textarea></td>
+            </tr>
+
+            </tbody>
+        </table>
+    </form>
+{% endblock %}
+
+<script>
+
+    jQuery('input,select,textarea','#schedular-settings-form').change(function(){
+        //Automatically safe setting directly:
+        api.SetSetting(jQuery(this).prop('name'),jQuery(this).val());
+        var $alert = jQuery('<div class="updated notice" style="top:46px;left:166px;position:fixed"><p>Settings have been updated.</p></div>');
+        $alert.prependTo("#wpbody-content");
+        setTimeout(function(){$alert.remove()},1500);
+    });
+</script>

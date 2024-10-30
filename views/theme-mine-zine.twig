@@ -1,0 +1,15 @@
+{{ get_header() }}
+
+{#<div id="main-content"> because of disgusting theme code!#}
+    {#<div id="content">  because of disgusting theme code!#}
+        {% block content %}
+                this is the content section
+        {% endblock %}
+        {#</section>#}
+    </div>
+
+    {{ get_sidebar() }}
+
+</div>
+
+{{ get_footer() }}

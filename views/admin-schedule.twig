@@ -1,0 +1,36 @@
+<h2>{{ tr('Calendars') }} <a href="?page=jih-CalendarForm" class="add-new-h2">{{ tr('Add New') }}</a>
+</h2>
+
+<form id="search-form" method="get" action="">
+    <p class="search-box">
+        <label class="screen-reader-text" for="plugin-search-input">Search Calendars:</label>
+        <input type="search" id="plugin-search-input" name="search" value="{{ search }}" placeholder="calendar name">
+        <input type="submit" id="search-submit" class="button" value="Search Calendars"></p>
+</form>
+
+<table class="wp-list-table widefat fixed selectable">
+    <thead>
+    <tr>
+        <th style="width: 24px;"><label for="cal-header"></label><input type="checkbox" id="cal-header"></th>
+        <th style="width: 100px;">{{ tr('Id') }}</th>
+        <th>{{ tr('Name') }}</th>
+        <th>{{ tr('Description') }}</th>
+        <th style="width: 124px;">{{ tr('Actions') }}</th>
+    </tr>
+    </thead>
+<tbody>
+{% for calendar in calendars %}
+<tr>
+    <th><label for="cal-{{ calendar.id }}"></label><input type="checkbox" id="cal-{{ calendar.id }}"></th>
+    <td>{{ calendar.id }}</td>
+    <td>{{ calendar.name }}</td>
+    <td>{{ calendar.description|escape }}</td>
+    <th>
+        <button class="button button-primary" onclick="EditCalendar({{ calendar.id }})">Edit</button>
+        <input class="button" type="button" onclick="DeleteCalendar({{ calendar.id }})" value="Delete" />
+    </th>
+</tr>
+
+{% endfor %}
+</tbody>
+</table>

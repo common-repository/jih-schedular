@@ -1,0 +1,84 @@
+{#{% extends 'theme-sparkling.twig' %}#}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $('#jih-request-form').submit(function(e){
+            e.preventDefault();
+            var data = $(this).serializeObject();
+            api.SendMail(data,function(){
+                alert('aanvraag is verstuurd')
+            });
+            return false;
+        })
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+{% if messageSent %}
+    <div class="alert alert-success" role="alert">
+        De aanvraag is verstuurd.
+        {#<a href="/" class="alert-link">Klik hier om naar de hoofdpagina te gaan.</a>#}
+    </div>
+{% endif %}
+
+    <h1>Aanmelden gebedsruimte</h1>
+    <p>
+        Vul hier onder de gegevens in van de gebedsruimte en verstuur je aanvraag.
+    </p>
+
+    <form id="jih-request-form" class="form-horizontal" action="#" method="post">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">Naam</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputEmail3" placeholder="Naam van de gebedsruime" name="name" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">Omschrijving</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="3" name="description">Vul hier een uitgebreide omschrijving van de ruimte</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <h2>Gegevens van de contactpersoon</h2>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="contactName" class="col-sm-2 control-label">Naam</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="contactName" placeholder="Voor en achternaam" name="contact[name]" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="contactEmail" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" id="contactEmail" placeholder="E-mailadres" name="contact[email]" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="contactPhone" class="col-sm-2 control-label">Telefoon-nummer</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="contactPhone" placeholder="telefoonnummer" name="contact[phone]" required>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Versturen</button>
+            </div>
+        </div>
+    </form>
+
+    <form role="form">
+
+    {% block modals %}
+
+    {% endblock %}
+
+{% endblock %}

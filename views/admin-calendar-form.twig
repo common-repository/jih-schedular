@@ -1,0 +1,39 @@
+<h2>{{ calendar ? tr('Edit') : tr('New') }} {{ tr('Calendar') }}
+</h2>
+<a href="#" class="go-back">{{ tr('Back') }}</a>
+
+
+{% block form %}
+    <form id="schedular-form" class="form-horizontal" role="form" method="post">
+
+        <table class="form-table">
+            <tbody>
+            <tr class="form-field form-required">
+                <th><label for="calendar-name">{{ tr('Name') }}</label></th>
+                <td><input id="calendar-name" type="text" name="name" placeholder="Name" value="{{ calendar.name }}"></td>
+            </tr>
+            <tr class="form-field form-required">
+                <th><label for="calendar-description">{{ tr('Description') }}</label></th>
+                <td>{{ wp_editor( calendar.description, 'description', [] ) }}
+                    {#<textarea id="calendar-description" rows="3" name="description" placeholder="Description">{{ calendar.description }}</textarea>#}
+                </td>
+            <tr class="form-field">
+                <td class="right"></td>
+                <td><button type="submit" class="button button-primary">{{ tr('Save') }}</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}
+
+<script>
+    jQuery('#schedular-form').submit(function(e){
+        e.preventDefault();
+        tinyMCE.triggerSave();
+        api.SaveCalendar(jQuery(this).serializeObject(),function(){
+            GotoUrl(jQuery.query.set('page','jih-calendars'))
+
+        });
+        return false;
+    })
+</script>

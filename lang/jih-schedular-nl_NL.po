@@ -1,0 +1,136 @@
+# Copyright (C) 2015 Jih Schedular
+# This file is distributed under the same license as the Jih Schedular package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Jih Schedular 1.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/jih-schedular\n"
+"POT-Creation-Date: 2015-08-26 13:43:44+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+
+#: jih-schedular.php:137
+msgid "Calendars"
+msgstr "Kalenders"
+
+#: jih-schedular.php:137
+msgid "Events"
+msgstr "Inschrijvingen"
+
+#: jih-schedular.php:137
+msgid "Edit"
+msgstr "Wijzigen"
+
+#: jih-schedular.php:137
+msgid "New"
+msgstr "Nieuw"
+
+#: jih-schedular.php:137
+msgid "Calendar"
+msgstr "Kalender"
+
+#: jih-schedular.php:137
+msgid "Back"
+msgstr "terug"
+
+#: jih-schedular.php:137
+msgid "Description"
+msgstr "Omschrijving"
+
+#: jih-schedular.php:137
+msgid "Save"
+msgstr "Opslaan"
+
+#: jih-schedular.php:137
+msgid "Datetime"
+msgstr "Datum tijd"
+
+#: jih-schedular.php:137
+msgid "Name"
+msgstr "Naam"
+
+#: jih-schedular.php:137
+msgid "Email"
+msgstr "Email"
+
+#: jih-schedular.php:137
+msgid "Pin"
+msgstr "Pin"
+
+#: jih-schedular.php:137
+msgid "Add New"
+msgstr "Nieuwe toevoegen"
+
+#: jih-schedular.php:137
+msgid "Id"
+msgstr "Id"
+
+#: jih-schedular.php:137
+msgid "CalId"
+msgstr "KalId"
+
+#: jih-schedular.php:137
+msgid "Date"
+msgstr "Datum"
+
+#: jih-schedular.php:137
+msgid "Actions"
+msgstr "Acties"
+
+#: jih-schedular.php:137
+msgid "Default calendar"
+msgstr "Standaard kalender"
+
+#: jih-schedular.php:137
+msgid "Recaptcha Clientside (site key)"
+msgstr "Recaptcha Clientside (site key)"
+
+#: jih-schedular.php:137
+msgid "get it here"
+msgstr "haal het hier"
+
+#: jih-schedular.php:137
+msgid "Recaptcha Serverside key"
+msgstr "Recaptcha Serverside key"
+
+#: jih-schedular.php:137
+msgid "Today"
+msgstr "Vandaag"
+
+#: jih-schedular.php:137
+msgid "Add Event"
+msgstr "Nieuwe inschrijving"
+
+#: jih-schedular.php:137
+msgid "Add Calendar"
+msgstr "Nieuwe Kalender"
+
+#: jih-schedular.php:137
+msgid ""
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Jih Schedular"
+msgstr "Jih Schedular"
+
+#. Plugin URI of the plugin/theme
+msgid "https://wordpress.org/plugins/jih-schedular/"
+msgstr "https://wordpress.org/plugins/jih-schedular/"
+
+#. Description of the plugin/theme
+msgid ""
+"A plugin that adds a page where you can show timetables, and people can "
+"schedule themselves in these tables."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "joelharkes"
+msgstr "joelharkes"
+
+#. Author URI of the plugin/theme
+msgid "http://URI_Of_The_Plugin_Author"
+msgstr "http://URI_Of_The_Plugin_Author"

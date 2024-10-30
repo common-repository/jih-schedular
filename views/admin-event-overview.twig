@@ -1,0 +1,41 @@
+<h2>{{ tr('Events') }} <a href="?page=jih-EventForm" class="add-new-h2">{{ tr('Add New') }}</a>
+</h2>
+
+<form id="search-form" method="get" action="">
+    <p class="search-box">
+        <label class="screen-reader-text" for="plugin-search-input">{{ tr('Search Calendars:') }}</label>
+        <input type="search" id="plugin-search-input" name="search" value="{{ search }}" placeholder="user name">
+        <input type="submit" id="search-submit" class="button" value="Search Calendars"></p>
+</form>
+
+<table class="wp-list-table widefat fixed selectable">
+    <thead>
+    <tr>
+        <th style="width: 24px;"><label for="cal-header"></label><input type="checkbox" id="cal-header"></th>
+        <th style="width: 48px;">{{ tr("Id") }}</th>
+        <th style="width: 48px">{{ tr('CalId') }}</th>
+        <th style="width: 124px;">{{ tr('Date') }}</th>
+        <th>{{ tr('Name') }}</th>
+        <th>{{ tr('Email') }}</th>
+        <th>{{ tr('Description') }}</th>
+        <th style="width: 124px">{{ tr('Actions') }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for event in events %}
+        <tr>
+            <th><label for="cal-{{ event.id }}"></label><input type="checkbox" id="cal-{{ event.id }}"></th>
+            <td>{{ event.id }}</td>
+            <td>{{ event.calendarId }}</td>
+            <td>{{ event.datetime }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.email }}</td>
+            <td>{{ event.description|escape }}</td>
+            <th>
+                <button class="button button-primary" onclick="EditEvent({{ event.id }})">{{ tr('Edit') }}</button>
+                <input class="button" type="button" onclick="DeleteEvent({{ event.id }})" value="Delete" />
+        </tr>
+
+    {% endfor %}
+    </tbody>
+</table>

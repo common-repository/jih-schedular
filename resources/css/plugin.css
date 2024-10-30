@@ -1,0 +1,126 @@
+/* Plugin Stuff */
+.schedular-header {
+    padding: 10px 10px;
+}
+
+#jih-calendar td {
+    overflow: auto;
+}
+#jih-calendar td::-webkit-scrollbar {
+    display: none;
+
+}
+
+#jih-calendar td.inThePast {
+    background-color: rgba(202, 202, 202, 0.38);
+
+}
+
+.table thead th {
+    font-weight: bold;
+    min-width: 83px;
+}
+
+.table tbody th {
+    text-align: right;
+}
+@media screen and (max-width: 500px) {
+    #jih-calendar tr th:nth-child(6),
+    #jih-calendar tr td:nth-child(6){
+        display:none;
+    }
+}
+@media screen and (max-width: 600px) {
+    #jih-calendar tr th:nth-child(7),
+    #jih-calendar tr td:nth-child(7){
+        display:none;
+    }
+}
+@media screen and (max-width: 700px) {
+    #jih-calendar tr th:nth-child(8),
+    #jih-calendar tr td:nth-child(8){
+        display:none;
+    }
+}
+
+/*table.table tbody > tr:nth-child(odd) > th {*/
+    /*background-color: #CCC;*/
+/*}*/
+/*table.table tbody > tr:nth-child(even) > th {*/
+    /*background-color: #FFF;*/
+/*}*/
+
+table.table tbody tr td:hover {
+    background-color: #AAA;
+}
+
+table.fixed {
+    table-layout: fixed;
+}
+
+a.btn:link, a.btn:visited {
+    font-weight: bold;
+    color: white;
+}
+
+/* For Calendar */
+table.table tbody tr td.is-filled {
+    background-color: #9fbdff;
+}
+
+
+/* UTIL STUFF */
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.center {
+    display: inline-block;
+    text-align: center;
+}
+
+/*Make calendar use full with of blog post in sparkling theme*/
+/*.schedular-body {*/
+    /*margin-left:-50px;*/
+    /*margin-right:-50px;*/
+/*}*/
+
+/* THEME Mine ZINE */
+/*#searchform .searchform-wrapper #s {*/
+    /*height: 31px !important;*/
+
+/*}*/
+
+/*.form-control {*/
+    /*background-color: #fff !important;*/
+    /*border: 1px solid #ccc !important;*/
+    /*width: 100%  !important;*/
+    /*padding: 6px 12px  !important;*/
+    /*font-size: 14px  !important;*/
+/*}*/
+
+/*#container .header-content,*/
+/*#wrapper #container #main-content,*/
+/*#footer,*/
+/*#header .menu-box,*/
+/*#main-content{*/
+    /*width: 100%; !important;*/
+
+/*}*/
+
+/* THEME Sparkling fix */
+#jih-plan-hour.modal,#jih-plan-hour>.modal-dialog {
+    z-index: 99999;
+}
+.modal-footer > button[type=submit] {
+    display: inline-block;
+}
+
+#jih-calendar th,
+#jih-calendar td {
+    font-size: 12px;
+}

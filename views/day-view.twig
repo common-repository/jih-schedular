@@ -1,0 +1,353 @@
+{#{% extends 'theme-sparkling.twig' %}#}
+
+{% block content %}
+
+    <script>
+        $(document).ready(function () {
+            moment.locale('{{ language() }}');
+
+            $infoModal = $('#jih-info-modal');
+            $eventModal = $('#jih-plan-hour');
+            $cal = $('#jih-calendar');
+            var _datetimeFormat = 'YYYY-MM-DD HH:mm:ss';
+            var loggedIn = {{ user ? 'true' : 'false' }};
+            var userId = {{ user.ID ?: 0 }};
+
+            $cal.schedule({
+                calendarId : {{ calendarId ? calendarId : 1  }},
+                showCalendarOptions : {{ user ? 'true' : 'false' }},
+                date : moment($.query.get('date') || moment({% if date %}'{{ date }}'{% endif %}).day(1).startOf('day').format('YYYY-MM-DD')), // start on monday
+                onTimeSlotClicked : function(data,clickEvent){
+                    var $this = $(data.event);
+                    if($this.hasClass('is-filled')){
+                        $infoModal.modal('show');
+                        var event = $this.data('event');
+                        $.each(event,function(attr,value){
+                            $infoModal.find('div.data-'+attr).text(value);
+                            $infoModal.find('input.data-'+attr).val(value);
+                        });
+
+                        $('.deleteBtn',$infoModal).prop( "disabled", event.userId != userId );
+                        if(!loggedIn){
+                            if (event.userId != userId)
+                                $('.pin-group',$infoModal).hide();
+                            else
+                                $('.pin-group',$infoModal).show();
+                        }
+
+
+                    } else if(!$this.hasClass('inThePast')) {
+                        $('#jih-date-show').val(data.date.format("dddd DD MMM HH:mm"));
+                        $('input[name=datetime]',$eventModal).val(data.date.format(_datetimeFormat));
+                        $('input[name=datetime]',$eventModal).val(data.date.format(_datetimeFormat));
+                        $('input[name=redirectUrl]',$eventModal).val(document.URL);
+                        $eventModal.modal('show');
+                    }
+                }
+            });
+
+
+            var onSuccesEventSave = function(){
+                $eventModal.modal('hide');
+                $cal.schedule('reload');
+            };
+
+            var $eventForm = $('#schedular-event-form');
+            $eventForm.submit(function(e){
+                e.preventDefault();
+                var data = $eventForm.serializeObject();
+                data.calendarId = $cal.schedule('getCalendarId');
+                if(data.repeat){
+                    $('.repeatEventCheckbox').click();
+                    var iteration = 1;
+                    while(data.repeatQuantity >= iteration){
+                        api.SaveEvent(data,false,false,true);
+                        data.datetime = moment(data.datetime).add(1,data.repeatPeriod).format(_datetimeFormat);
+                        iteration++;
+                    }
+                    onSuccesEventSave();
+                } else {
+                    api.SaveEvent(data,onSuccesEventSave);
+                }
+
+                if(loggedIn){
+                    window.location.reload();
+                }
+            });
+            
+            var $deleteForm = $('#delete-event-form');
+            $deleteForm.submit(function(e){
+                e.preventDefault();
+                var data = $deleteForm.serializeObject();
+                var onSuccess = function(){
+                    $infoModal.modal('hide');
+                    $cal.schedule('reload');
+                };
+                if(loggedIn){
+                    api.DeleteEvent(data.id,onSuccess,function(){
+                        alert('Event not deleted, it was not made on this account')
+                    })
+                } else {
+                    api.DeleteEventByPin(data,onSuccess,function(){
+                        alert('Event not deleted, wrong pincode. (Events without pin cannot be deleted by users)')
+                    })
+                }
+
+            });
+
+            //Repeat behaviour
+            $('.repeatEventCheckbox').click(function(){
+                $(this).next().toggle();
+            });
+
+            $('.changes-end-period').change(function(){
+                var data = $eventForm.serializeObject();
+                var iteration = 1;
+                var datetime = moment(data.datetime);
+                while(data.repeatQuantity > iteration){
+                    datetime = datetime.add(1,data.repeatPeriod);
+                    iteration++;
+                }
+                $("#period-end").text("(t/m "+datetime.format("dddd DD MMM")+")");
+
+            });
+        });
+
+    </script>
+    <style>
+        {{ setting('style') }}
+    </style>
+    <div class="schedular-body">
+        {#<div class="content-headline">#}
+            {#<h1 class="entry-headline"><span class="entry-headline-text">Gebed - <span class="setCalendarName"></span></span></h1>#}
+        {#</div>#}
+
+        <div class="schedular-header row">
+            <div class="col-md-5">
+                <a onclick="$('#jih-calendar').schedule('gotoLast',7,'days');" class="btn">&lt;&lt;</a>
+                <a onclick="$('#jih-calendar').schedule('gotoLast',1,'days');" class="btn">&lt;</a>
+                <a onclick="$('#jih-calendar').schedule('goto',moment());" class="btn">{{ tr('Today') }}</a>
+                <a onclick="$('#jih-calendar').schedule('gotoNext',1,'days');" class="btn">&gt;</a>
+                <a onclick="$('#jih-calendar').schedule('gotoNext',7,'days');" class="btn">&gt;&gt;</a>
+            </div>
+            <div class="col-md-3">
+                <h3 id="calendar-header-date" style="margin: 4px 0 8px 0;"></h3>
+            </div>
+            <div class="col-md-4">
+                {% if setting('showCalendar') == 2 or (setting('showCalendar') == 1 and user) %}
+                <select name="calendar" class="form-control" id="jih-calendar-choice" onchange="$('#jih-calendar').schedule('changeCalendar',$(this).val())">
+                    {% for calendar in calendars %}
+                        <option value="{{ calendar.id }}" {{ calendar.id==calendarId ? 'selected' }}>{{ calendar.name }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+
+        <table id="jih-calendar" class="table table-striped table-bordered calendar fixed">
+            <thead>
+            <tr>
+                <th style="width: 102px"></th>
+                {% for date in 1..7 %}
+                    <th>{{ date }}</th>
+
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in 0..23 %}
+            <tr>
+                <th>{{ i }}:00 - {{ i+1 }}:00</th>
+                {% for date in 1..7 %}
+                    <td></td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div id="calenderDescription" class="entry clearfix">
+            {% autoescape false %}
+                {{ calendar.description }}
+            {% endautoescape %}
+        </div>
+    </div>
+
+    {% block modals %}
+        <div id="jih-plan-hour" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                                    class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Boek een gebedsuur</h4>
+                    </div>
+                    
+                    <form id="schedular-event-form" class="form-horizontal" role="form" action="/" method="post">
+                    {% if setting('allowBookHour') != "user" or user %}
+                        <div class="modal-body">
+                            <div class="hide">
+                                <input id="redirect-url" type="text" class="form-control" name="redirectUrl" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="jih-date-show" class="col-sm-2 control-label">Datum-tijd</label>
+                                <input id="jih-date" type="hidden" class="form-control" name="datetime" readonly>
+                                <div class="col-sm-10">
+                                    <input id="jih-date-show" class="form-control" placeholder="Date" readonly>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <label for="jih-name" class="col-sm-2 control-label">Naam</label>
+
+                                <div class="col-sm-10">
+                                    <input id="jih-name" type="text" class="form-control" name="name" placeholder="Name" value="{{ user.user_login}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="jih-email" class="col-sm-2 control-label">Email*</label>
+
+                                <div class="col-sm-10">
+                                    <input type="email" class="form-control" id="jih-email" name="email" value="{{ user.user_email}}"
+                                           placeholder="Email" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="jih-email" class="col-sm-2 control-label">Beschrijving</label>
+
+                                <div class="col-sm-10">
+                                    <textarea id="jih-description" class="form-control" rows="3" name="description"
+                                              placeholder="Description"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="jih-email" class="col-sm-2 control-label">Herhaal</label>
+
+                                <div class="col-sm-10">
+                                    {% if not user %}
+                                    Maak <a href="#" class="register-link"  data-dismiss="modal">hier</a> een account aan om van deze feature gebruik te maken.
+                                    {% else %}
+                                        <input type="checkbox" name="repeat" class="repeatEventCheckbox">
+                                        <span style="display: none;">
+                                             Elke
+                                        <select name="repeatPeriod" class="changes-end-period">
+                                            <option value="day">dag</option>
+                                            <option value="week">week</option>
+                                            <option value="month">maand</option>
+                                        </select>
+                                            , voor
+                                        <input type="number" name="repeatQuantity" min="1" max="12" class="changes-end-period">
+                                         keer
+                                        </span>
+                                        <span id="period-end"></span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if not user %}
+                            <div class="form-group pin-group">
+                                <label for="jih-pin" class="col-sm-2 control-label">Pin</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" name="pin" class="form-control" id="jih-pin" placeholder="om boeking te verwijderen">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="captcha-div" class="col-sm-2 control-label">Captcha</label>
+                                <div class="col-sm-10 recaptcha-container">
+                                    <div id="captcha-div" class="g-recaptcha" data-sitekey="{{ setting('reCaptchaClient') }}"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                            <button type="submit" class="btn btn-primary">Opslaan</button>
+                        </div>
+                        {% else %}
+                        <div class="modal-body">
+                            Login om een uur te boeken.<br/>
+                            <br/>
+                            Je kunt alleen uren boeken als je ingelogd bent.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+        <div id="jih-info-modal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                                    class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Event Details</h4>
+                    </div>
+                    <form id="delete-event-form" class="form-horizontal" role="form" action="/" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="col-sm-2">Id</div>
+                                <input type="hidden" class="data-id" name="id" value=""/>
+                                <div class="col-sm-10 data-id">
+                                    Id
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">Datum-tijd</div>
+                                <div class="col-sm-10 data-datetime">
+                                    Date
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">Naam</div>
+
+                                <div class="col-sm-10 data-name">
+                                    Name
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">Email</div>
+
+                                <div class="col-sm-10 data-email">
+                                    Email
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">Beschrijving</div>
+
+                                <div class="col-sm-10 data-description">
+                                    Description
+                                </div>
+                            </div>
+                            {% if not user %}
+                            <div class="form-group pin-group">
+                                <label for="jih-info-pin" class="col-sm-2 control-label">Pin</label>
+
+                                <div class="col-sm-10">
+                                    <input type="password" name="pin" class="form-control" id="jih-info-pin" placeholder="Pin">
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="deleteEventButton" class="deleteBtn" type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endblock %}
+
+{% endblock %}
